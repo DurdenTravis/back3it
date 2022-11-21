@@ -1,0 +1,6 @@
+projectKey=cl.3it.test:test-it
+serverUrl=http://localhost:9000
+serverVersion=9.7.1.62043
+dashboardUrl=http://localhost:9000/dashboard?id=cl.3it.test%3Atest-it
+ceTaskId=AYSby63KXd-VMnX0a-98
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AYSby63KXd-VMnX0a-98

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PollController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">test-it</a> &gt; <a href="index.source.html" class="el_package">cl.it.test.testit.controller</a> &gt; <span class="el_source">PollController.java</span></div><h1>PollController.java</h1><pre class="source lang-java linenums">package cl.it.test.testit.controller;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import cl.it.test.testit.controller.exception.BusinessException;
+import cl.it.test.testit.entity.Poll;
+import cl.it.test.testit.model.PollRequestModel;
+import cl.it.test.testit.service.PollService;
+
+import static  cl.it.test.testit.util.Constants.MESSAGE;
+import static  cl.it.test.testit.util.Constants.ERROR;
+import static  cl.it.test.testit.util.Constants.ERRORS;
+
+@RestController
+@RequestMapping(&quot;polls&quot;)
+@CrossOrigin(&quot;*&quot;)
+<span class="fc" id="L37">public class PollController {</span>
+
+<span class="fc" id="L39">	private final Logger log = LoggerFactory.getLogger(PollController.class);</span>
+
+	@Autowired
+	PollService pollService;
+
+	@GetMapping(&quot;/&quot;)
+	public ResponseEntity&lt;?&gt; all() {
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">		if(log.isDebugEnabled()) {</span>
+<span class="nc" id="L47">			log.debug(&quot;Obteniendo encuestas&quot;);</span>
+		}
+<span class="fc" id="L49">		return new ResponseEntity&lt;&gt;(pollService.findAll(), HttpStatus.OK);</span>
+	}
+
+	@PostMapping(&quot;/poll&quot;)
+	public ResponseEntity&lt;?&gt; create(@Valid @RequestBody PollRequestModel poll, BindingResult result) {
+<span class="nc" id="L54">		Poll newPoll = null;</span>
+<span class="nc" id="L55">		Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">		if(result.hasErrors()) {</span>
+<span class="nc" id="L57">			List&lt;String&gt; errors = result.getFieldErrors()</span>
+<span class="nc" id="L58">					.stream()</span>
+<span class="nc" id="L59">					.map(err -&gt; &quot;El campo '&quot; + err.getField() +&quot;' &quot;+ err.getDefaultMessage())</span>
+<span class="nc" id="L60">					.collect(Collectors.toList());</span>
+<span class="nc" id="L61">			response.put(ERRORS, errors);</span>
+<span class="nc" id="L62">			throw new BusinessException(&quot;400&quot;, response.toString());</span>
+		}
+		try {
+<span class="nc" id="L65">			Poll pollEntity = Poll.builder()</span>
+<span class="nc" id="L66">					.createAt(new Date())</span>
+<span class="nc" id="L67">					.email(poll.getEmail())</span>
+<span class="nc" id="L68">					.kindMusic(poll.getKindMusic())</span>
+<span class="nc" id="L69">					.build();</span>
+<span class="nc" id="L70">			Poll pollByEmail = pollService.findByEmail(pollEntity.getEmail());</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">			if (pollByEmail != null) {</span>
+<span class="nc" id="L72">				response.put(MESSAGE, &quot;Error al realizar la solicitud&quot;);</span>
+<span class="nc" id="L73">				response.put(ERROR, &quot;Mail ya encuestado&quot;);</span>
+<span class="nc" id="L74">				return new ResponseEntity&lt;&gt;(response, HttpStatus.INTERNAL_SERVER_ERROR);</span>
+			}
+<span class="nc" id="L76">			newPoll = pollService.save(pollEntity);</span>
+<span class="nc" id="L77">		} catch(DataAccessException e) {</span>
+<span class="nc" id="L78">			response.put(MESSAGE, &quot;Error al realizar el insert en la base de datos&quot;);</span>
+<span class="nc" id="L79">			response.put(ERROR, e.getMessage().concat(&quot;: &quot;).concat(e.getMostSpecificCause().getMessage()));</span>
+<span class="nc" id="L80">			return new ResponseEntity&lt;&gt;(response, HttpStatus.INTERNAL_SERVER_ERROR);</span>
+<span class="nc" id="L81">		}</span>
+<span class="nc" id="L82">		response.put(MESSAGE, &quot;Su respuesta ha sido creada con éxito!&quot;);</span>
+<span class="nc" id="L83">		response.put(&quot;poll&quot;, newPoll);</span>
+<span class="nc" id="L84">		return new ResponseEntity&lt;&gt;(response, HttpStatus.CREATED);</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

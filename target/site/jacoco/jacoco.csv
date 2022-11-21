@@ -1,0 +1,15 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+test-it,cl.it.test.testit.util,Constants,3,0,0,0,1,0,1,0,1,0
+test-it,cl.it.test.testit.advice,PollControllerAdvice,7,3,0,0,1,1,1,1,1,1
+test-it,cl.it.test.testit.controller.exception,BusinessException,23,3,0,0,10,2,5,1,5,1
+test-it,cl.it.test.testit.model,PollRequestModel,24,0,0,0,5,0,7,0,7,0
+test-it,cl.it.test.testit.model,PollResponseModel,15,24,1,1,3,5,5,1,4,1
+test-it,cl.it.test.testit,TestItApplication,5,3,0,0,2,1,1,1,1,1
+test-it,cl.it.test.testit.controller,PollController,123,19,5,1,29,4,5,2,2,2
+test-it,cl.it.test.testit.enums,MusicTypeEnum,0,78,0,0,0,10,0,2,0,2
+test-it,cl.it.test.testit.service.impl,PollServiceImpl,57,16,2,0,10,3,5,1,4,1
+test-it,cl.it.test.testit.components,DataLoader,0,79,0,0,0,7,0,2,0,2
+test-it,cl.it.test.testit.dto,ErrorDTO.ErrorDTOBuilder,27,0,0,0,1,0,5,0,5,0
+test-it,cl.it.test.testit.dto,ErrorDTO,125,0,22,0,4,0,21,0,10,0
+test-it,cl.it.test.testit.entity,Poll,193,21,38,0,5,3,31,3,12,3
+test-it,cl.it.test.testit.entity,Poll.PollBuilder,45,0,0,0,1,0,7,0,7,0
