@@ -2,6 +2,7 @@ package cl.it.test.testit.controller;
 
 
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
@@ -18,8 +19,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -31,16 +34,19 @@ import cl.it.test.testit.service.PollService;
 
 @ExtendWith(MockitoExtension.class)
 class PollControllerTest {
-	
+
 	@InjectMocks
 	PollController pollController;
-	
-	
+
+
 	@Mock
 	PollService pollService;
-	
+
 	@Mock
 	private BindingResult mockBingingdResult;
+	
+	@Autowired
+	private MockMvc mvc;
 
 	@Before(value="")
 	void setupTest() {
@@ -55,32 +61,49 @@ class PollControllerTest {
 		list.add(model1);
 		PollResponseModel model2 = new PollResponseModel("POP", 13L, 0);
 		list.add(model2);
-		
+
 		when(pollService.findAll()).thenReturn(list);
-		
+
 		ResponseEntity<Object> result = pollController.all();
-		
+
 		assertNotNull(result);
-		
+
 	}
-	
+
 	@Test
 	void testCreate() {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 		PollRequestModel poll = new PollRequestModel(new Date(), "manuel.escarate.inf@gmail.com" , "ROCK");
 		Poll pollEntiy1 = new Poll((long) 1,new Date(), "manuel.escarate.inf@gmail.com" , "ROCK");
-		Poll pollEntiy2 = new Poll((long) 1,new Date(), "manuel.escarate.inf@gmail.com" , "ROCK");
+		Poll pollEntiy2 = new Poll((long) 1,new Date(), "manuel.escarate.inf5@gmail.com" , "ROCK");
 		Mockito.when(mockBingingdResult.hasErrors()).thenReturn(false);
-		
-		when(pollService.findByEmail(anyString())).thenReturn(pollEntiy1);
-		when(pollService.save(pollEntiy1)).thenReturn(pollEntiy2);
+
+		Mockito.lenient().when(pollService.findByEmail(anyString())).thenReturn(null);
+		Mockito.lenient().when(pollService.save(pollEntiy1)).thenReturn(pollEntiy2);
 
 		ResponseEntity<Object> result = pollController.create(poll,mockBingingdResult);
-		
-		// assertThat(result.getStatusCode()).isEqualTo(201);
-		
+
+		assertThat(result.getStatusCodeValue()).isEqualTo(201);
+
 	}
-	
-	
+
+	@Test
+	void testCreateRepeatEmail() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+		PollRequestModel poll = new PollRequestModel(new Date(), "manuel.escarate.inf@gmail.com" , "ROCK");
+		Poll pollEntiy1 = new Poll((long) 1,new Date(), "manuel.escarate.inf@gmail.com" , "ROCK");
+		Poll pollEntiy2 = new Poll((long) 1,new Date(), "manuel.escarate.inf5@gmail.com" , "ROCK");
+		Mockito.when(mockBingingdResult.hasErrors()).thenReturn(false);
+
+		Mockito.lenient().when(pollService.findByEmail(anyString())).thenReturn(pollEntiy1);
+		Mockito.lenient().when(pollService.save(pollEntiy1)).thenReturn(pollEntiy2);
+
+		ResponseEntity<Object> result = pollController.create(poll,mockBingingdResult);
+
+		assertThat(result.getStatusCodeValue()).isEqualTo(500);
+	}
+
+
 }

@@ -8,12 +8,11 @@ import lombok.Setter;
 public class PollResponseModel {
 
 <span class="fc" id="L10">	public PollResponseModel(String music, Long total, int sizeList) {</span>
-<span class="fc" id="L11">		double percent = (double)total*100;</span>
-<span class="fc" id="L12">		this.kindMusic = music;</span>
-<span class="pc bpc" id="L13" title="1 of 2 branches missed.">		this.percent = total &gt; 0 ? (percent)/sizeList : 0;</span>
-<span class="fc" id="L14">	}</span>
-<span class="nc" id="L15">	private String kindMusic;</span>
-<span class="nc" id="L16">	private double percent;</span>
+<span class="fc" id="L11">		this.kindMusic = music;</span>
+<span class="pc bpc" id="L12" title="1 of 2 branches missed.">		this.percent = total &gt; 0 ? ((double)total*100)/sizeList : 0;</span>
+<span class="fc" id="L13">	}</span>
+<span class="nc" id="L14">	private String kindMusic;</span>
+<span class="nc" id="L15">	private double percent;</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
